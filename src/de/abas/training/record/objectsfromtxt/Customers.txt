@@ -1,0 +1,22 @@
+swd;addr;street;zipCode;town;stateOfTaxOffice;phoneNo
+;swd;addr;salutation;contactPerson;functionAddressee
+PLANET;Planet Profit;Wallstrasse 18;53547;Dattenberg;DE;02638 55 13 61
+;KOHLER;Doreen Kohler;f;Kohler;Finisher
+;EISENHOWER;Sophie Eisenhower;f;Eisenhower;Scientist
+MISSIONG;Mission G;95, Chemin des Bateliers;61000;ALENÇON;FR;02.51.38.83.52
+;MAJORY;William Majory;m;Majory;Portfolio Manager
+NETSTARS;Netstars Matrix Design;2397 Adamsville Road;78076;Zapata;US;956-765-8622
+;CHOU;Yue You Chou;f;Chou;Automotive
+LOCOST;Locost Accessories;Kammelenbergstrasse 48;1966;Fortunau;CH;027 534 98 99
+;ZIEGLER;Johanna Ziegler;f;Ziegler;Sales
+;FREYTAG;Katharina Freytag;f;Freytag;Production
+;LOWE;Niklas Lowe;m;Lowe;Sales
+ALLWOUNDUP;All Wound Up;Charlottenstrasse 67;03012;Cottbus;DE;0355 80 18 72
+;MÖLLER;Jessika Möller;f;Möller;Credit investigator
+;FRANKFURTER;Gabriele Frankfurter;f;Frankfurter;Communications
+IDEALGARDEN;Ideal Garden Maintenance;Hoheluftchaussee 84;55471;Tiefenbach;DE;034322 97 91
+;DURR;Ursula Durr;f;Durr;Staffing consultant
+PLANETBIZ;Planetbiz;1834 Broad Street;35023;Hueytown;US;205-497-4972
+;GREEN;Richard S. Green;m;Green;Harbor pilot
+;WELLS;Marcia M. Wells;f;Wells;Bookbinder
+;THRELKELD;Amelia Threlkeld;f;Threlkeld;Market Research Analyst

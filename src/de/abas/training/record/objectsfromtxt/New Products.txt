@@ -1,0 +1,8 @@
+swd;descr;salesPrice;packDimLength;packDimWidth;packDimHeight
+DINGHOLD;Dinghold;5.72;11.25;15.26;58.66
+ALPHAIN;Alphain;6.57;30.52;92.67;21.96
+CONTAX;Contax;8.75;35.99;98.83;91.64
+SILLAB;Sillab;5.68;42.93;93.39;74.98
+TOUCH;Touchsoltom;1.16;92.12;99.08;24.43
+FRESHW;Freshwarm;70.85;97.22;75.83
+ZENDAX;Zendax;79.95;69.10;52.50
