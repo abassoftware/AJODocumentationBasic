@@ -10,12 +10,11 @@ public class FirstClientApplication extends AbstractAjoAccess {
 	
 	@Override
 	public void run(String[] args) {
-		// Erzeugt eine Client-Verbindung zum Mandant
+		// creates a client connection
 		getDbContext();
 		getDbContext().out().println("Client-Application running...");
 		
-		
-		// Aufrufparameter ausgeben
+		// prints this method's arguments
 		for (int i = 0; i < args.length; i++) {
 			getDbContext().out().println(i + " -> " + args[i]);
 		}
