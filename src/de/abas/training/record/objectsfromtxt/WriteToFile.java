@@ -9,11 +9,11 @@ public class WriteToFile extends AbstractAjoAccess {
 
 	public static void main(String[] args) {
 		WriteToFile writeToFile = new WriteToFile();
-		writeToFile.runClientProgram();
+		writeToFile.runClientProgram(args);
 	}
 
 	@Override
-	public void run() {
+	public void run(String[] args) {
 		FileWriter fileWriter = null;
 		try {
 			// the path of the file to write to

@@ -20,11 +20,11 @@ public class MakeTransaction extends AbstractAjoAccess {
 	 */
 	public static void main(String[] args) {
 		MakeTransaction makeTransaction = new MakeTransaction();
-		makeTransaction.runClientProgram();
+		makeTransaction.runClientProgram(args);
 	}
 
 	@Override
-	public void run() {
+	public void run(String[] args) {
 		// gets and begins transaction
 		Transaction transaction = getDbContext().getTransaction();
 		transaction.begin();

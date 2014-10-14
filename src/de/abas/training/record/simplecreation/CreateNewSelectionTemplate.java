@@ -22,11 +22,11 @@ public class CreateNewSelectionTemplate extends AbstractAjoAccess {
 	public static void main(String[] args) {
 		CreateNewSelectionTemplate createNewSelectionTemplate =
 				new CreateNewSelectionTemplate();
-		createNewSelectionTemplate.runClientProgram();
+		createNewSelectionTemplate.runClientProgram(args);
 	}
 
 	@Override
-	public void run() {
+	public void run(String[] args) {
 		EDPEditor edpEditor = null;
 		SelectionTemplateEditor selectionTemplateEditor = null;
 		try {

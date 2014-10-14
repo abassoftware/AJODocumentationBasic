@@ -18,11 +18,11 @@ public class DeleteExistingVendorContact extends AbstractAjoAccess {
 	public static void main(String[] args) {
 		DeleteExistingVendorContact deleteExistingVendorContact =
 				new DeleteExistingVendorContact();
-		deleteExistingVendorContact.runClientProgram();
+		deleteExistingVendorContact.runClientProgram(args);
 	}
 
 	@Override
-	public void run() {
+	public void run(String[] args) {
 		// loads VendorContact with the ID (261, 1, 0)
 		VendorContact vendorContact =
 				getDbContext().load(VendorContact.class,

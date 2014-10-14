@@ -19,11 +19,11 @@ public class WriteProductsToXML extends AbstractAjoAccess {
 
 	public static void main(String[] args) {
 		WriteProductsToXML writeProductsToXML = new WriteProductsToXML();
-		writeProductsToXML.runClientProgram();
+		writeProductsToXML.runClientProgram(args);
 	}
 
 	@Override
-	public void run() {
+	public void run(String[] args) {
 		FileOutputStream fileOutputStream = null;
 		// database context
 		DbContext ctx = getDbContext();

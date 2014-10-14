@@ -19,11 +19,11 @@ public class ChangeExistingProduct extends AbstractAjoAccess {
 	public static void main(String[] args) {
 		ChangeExistingProduct changeExistingProduct =
 				new ChangeExistingProduct();
-		changeExistingProduct.runClientProgram();
+		changeExistingProduct.runClientProgram(args);
 	}
 
 	@Override
-	public void run() {
+	public void run(String[] args) {
 		// loads the product with the id (1,2,0)
 		Product product =
 				getDbContext().load(Product.class, new IdImpl("(1,2,0)"));
@@ -57,5 +57,4 @@ public class ChangeExistingProduct extends AbstractAjoAccess {
 			}
 		}
 	}
-
 }

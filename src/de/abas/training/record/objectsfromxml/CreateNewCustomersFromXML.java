@@ -18,11 +18,11 @@ public class CreateNewCustomersFromXML extends AbstractAjoAccess {
 	public static void main(String[] args) {
 		CreateNewCustomersFromXML createNewCustomersFromXML =
 				new CreateNewCustomersFromXML();
-		createNewCustomersFromXML.runClientProgram();
+		createNewCustomersFromXML.runClientProgram(args);
 	}
 
 	@Override
-	public void run() {
+	public void run(String[] args) {
 		ProductEditor productEditor = null;
 		// path of XML file
 		String xmlFile = "C:/Users/abas/Documents/New Products.xml";

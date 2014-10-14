@@ -12,11 +12,11 @@ public class FixCustomersWithoutPhoneNo extends AbstractAjoAccess {
 	public static void main(String[] args) {
 		FixCustomersWithoutPhoneNo fixCustomersWithoutPhoneNo =
 				new FixCustomersWithoutPhoneNo();
-		fixCustomersWithoutPhoneNo.runClientProgram();
+		fixCustomersWithoutPhoneNo.runClientProgram(args);
 	}
 
 	@Override
-	public void run() {
+	public void run(String[] args) {
 		// database context
 		DbContext ctx = getDbContext();
 		String xmlFile = getXMLFile();

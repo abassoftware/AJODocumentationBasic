@@ -13,11 +13,11 @@ public class XMLExport extends AbstractAjoAccess {
 
 	public static void main(String[] args) {
 		XMLExport xmlExport = new XMLExport();
-		xmlExport.runClientProgram();
+		xmlExport.runClientProgram(args);
 	}
 
 	@Override
-	public void run() {
+	public void run(String[] args) {
 		try {
 			String xmlFile = "C:/Users/abas/Documents/XMLExport.xml";
 			// creates root element ABASData

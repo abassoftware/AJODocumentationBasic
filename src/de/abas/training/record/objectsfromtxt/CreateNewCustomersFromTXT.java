@@ -21,7 +21,7 @@ import de.abas.training.common.AbstractAjoAccess;
 public class CreateNewCustomersFromTXT extends AbstractAjoAccess {
 
 	@Override
-	public void run() {
+	public void run(String[] args) {
 		// number of line of text file that is currently read
 		int lineNo = 0;
 		// arrays in which to store field names and values

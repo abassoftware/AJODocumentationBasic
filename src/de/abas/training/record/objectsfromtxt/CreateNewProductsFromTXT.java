@@ -18,7 +18,7 @@ public class CreateNewProductsFromTXT extends AbstractAjoAccess {
 	public static void main(String[] args) {
 		CreateNewProductsFromTXT createNewProductsFromTXT =
 				new CreateNewProductsFromTXT();
-		createNewProductsFromTXT.runClientProgram();
+		createNewProductsFromTXT.runClientProgram(args);
 	}
 
 	// database context
@@ -32,7 +32,7 @@ public class CreateNewProductsFromTXT extends AbstractAjoAccess {
 	private String SERVER_LOG_PATH = "owfiles/LOG.TXT";
 
 	@Override
-	public void run() {
+	public void run(String[] args) {
 		// initializes BufferedReader and Buffered Writer
 		BufferedReader bufferedReader = null;
 		BufferedWriter bufferedWriter = null;

@@ -14,11 +14,11 @@ public class CreateNewCustomer extends AbstractAjoAccess {
 	 */
 	public static void main(String[] args) {
 		CreateNewCustomer createNewCustomer = new CreateNewCustomer();
-		createNewCustomer.runClientProgram();
+		createNewCustomer.runClientProgram(args);
 	}
 
 	@Override
-	public void run() {
+	public void run(String[] args) {
 		CustomerEditor newCustomer = null;
 		try {
 			// gets instance of CustomerEditor

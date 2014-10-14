@@ -16,11 +16,11 @@ public class ReadFromXML extends AbstractAjoAccess {
 
 	public static void main(String[] args) {
 		ReadFromXML readFromXML = new ReadFromXML();
-		readFromXML.runClientProgram();
+		readFromXML.runClientProgram(args);
 	}
 
 	@Override
-	public void run() {
+	public void run(String[] args) {
 		DbContext context = getDbContext();
 		// path of XML file
 		String xmlFile =

@@ -10,11 +10,11 @@ public class ReadFromFile extends AbstractAjoAccess {
 
 	public static void main(String[] args) {
 		ReadFromFile readFromFile = new ReadFromFile();
-		readFromFile.runClientProgram();
+		readFromFile.runClientProgram(args);
 	}
 
 	@Override
-	public void run() {
+	public void run(String[] args) {
 		// String in which to store content of file
 		String fileContent = "";
 		// Stores the current character as integer as it is returned by
