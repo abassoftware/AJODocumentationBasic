@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.abas.eks.jfop.remote.FOe;
+import de.abas.erp.api.gui.ButtonSet;
 import de.abas.erp.api.gui.TextBox;
 import de.abas.erp.axi.event.EventException;
 import de.abas.erp.axi.screen.ScreenControl;
@@ -13,6 +15,7 @@ import de.abas.erp.axi2.annotation.ScreenEventHandler;
 import de.abas.erp.axi2.event.ScreenEndEvent;
 import de.abas.erp.axi2.event.ScreenEvent;
 import de.abas.erp.axi2.type.ScreenEventType;
+import de.abas.erp.common.type.enums.EnumDialogBox;
 import de.abas.erp.common.type.enums.EnumEditorAction;
 import de.abas.erp.db.DbContext;
 import de.abas.erp.db.field.TypedField;
@@ -32,16 +35,54 @@ import de.abas.jfop.base.buffer.internal.BufferFactoryImpl;
 @RunFopWith(EventHandlerRunner.class)
 public class CustomerScreenEventHandler {
 
+	/**
+	 * Shows dialog box when cancel button is pressed to determine whether
+	 * the customer should be displayed in View mode.
+	 * 
+	 * @param event The event that occurred.
+	 * @param screenControl The ScreenControl instance.
+	 * @param ctx The database context.
+	 * @param head The CustomerEditor instance.
+	 * @throws EventException Thrown to close the current window.
+	 */
 	@ScreenEventHandler(type = ScreenEventType.CANCEL)
 	public void screenCancel(ScreenEvent event, ScreenControl screenControl,
 			DbContext ctx, CustomerEditor head) throws EventException {
-		// TODO Auto-generated method stub
+		EnumDialogBox box =
+				new TextBox(ctx, "Screen cancelled", "Do you want to reopen this customer in View mode?")
+						.setButtons(ButtonSet.YES_NO).show();
+		if (box.equals(EnumDialogBox.No)) {
+			throw new EventException("");
+		}
+		else {
+			FOe.command("-PARALLEL <(Customer)>" + head.getId().toString() + "<(View)>");
+			throw new EventException("");
+		}
 	}
 
+	/**
+	 * Checks whether outstanding items for current customer are greater than
+	 * the credit limit.
+	 * 
+	 * @param event The event that occurred.
+	 * @param screenControl The ScreenControl instance.
+	 * @param ctx The database context.
+	 * @param head The CustomerEditor instance.
+	 * @throws EventException The exception thrown if an error occurred.
+	 */
 	@ScreenEventHandler(type = ScreenEventType.END)
 	public void screenEnd(ScreenEndEvent event, ScreenControl screenControl,
 			DbContext ctx, CustomerEditor head) throws EventException {
-		// TODO Auto-generated method stub
+		OutstandingItems outstandingItems =
+				ctx.openInfosystem(OutstandingItems.class);
+		outstandingItems.setBervon(head.getIdno());
+		outstandingItems.setBerbis(head.getIdno());
+		outstandingItems.invokeStart();
+		BigDecimal ofsoll = outstandingItems.getOfsoll();
+		if (ofsoll.compareTo(head.getCredLim()) == 1) {
+			new TextBox(ctx, "Credit limit reached",
+					"This customers credit limit is exeeded.").show();
+		}
 	}
 
 	/**
@@ -84,27 +125,10 @@ public class CustomerScreenEventHandler {
 		}
 	}
 
-	/**
-	 * Checks whether outstanding items for current customer are greater than the credit limit.
-	 * 
-	 * @param event The event that occurred.
-	 * @param screenControl The ScreenControl instance.
-	 * @param ctx The database context.
-	 * @param head The CustomerEditor instance.
-	 * @throws EventException The exception thrown if an error occurred.
-	 */
 	@ScreenEventHandler(type = ScreenEventType.EXIT)
 	public void screenExit(ScreenEvent event, ScreenControl screenControl,
 			DbContext ctx, CustomerEditor head) throws EventException {
-		OutstandingItems outstandingItems = ctx.openInfosystem(OutstandingItems.class);
-		outstandingItems.setBervon(head.getIdno());
-		outstandingItems.setBerbis(head.getIdno());
-		outstandingItems.invokeStart();
-		BigDecimal ofsoll = outstandingItems.getOfsoll();
-		if (ofsoll.compareTo(head.getCredLim()) == 1) {
-			new TextBox(ctx, "Credit limit reached", "This customers credit limit is exeeded.").show();
-		}
-		
+
 	}
 
 	/**
