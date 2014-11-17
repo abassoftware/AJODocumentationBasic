@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.abas.eks.jfop.remote.FOe;
-import de.abas.erp.api.gui.ButtonSet;
 import de.abas.erp.api.gui.TextBox;
 import de.abas.erp.axi.event.EventException;
 import de.abas.erp.axi.screen.ScreenControl;
@@ -15,7 +14,6 @@ import de.abas.erp.axi2.annotation.ScreenEventHandler;
 import de.abas.erp.axi2.event.ScreenEndEvent;
 import de.abas.erp.axi2.event.ScreenEvent;
 import de.abas.erp.axi2.type.ScreenEventType;
-import de.abas.erp.common.type.enums.EnumDialogBox;
 import de.abas.erp.common.type.enums.EnumEditorAction;
 import de.abas.erp.db.DbContext;
 import de.abas.erp.db.field.TypedField;
@@ -36,9 +34,88 @@ import de.abas.jfop.base.buffer.internal.BufferFactoryImpl;
 public class CustomerScreenEventHandler {
 
 	/**
-	 * Shows dialog box when cancel button is pressed to determine whether
-	 * the customer should be displayed in View mode.
-	 * 
+	 * Stores the names of the fields stored in the List in a String separating them
+	 * with a line break.
+	 *
+	 * @param fields The list of fields.
+	 * @return The string containing the names of the fields.
+	 */
+	private String getFieldNames(List<TypedField<CustomerEditor>> fields) {
+		String listOfFields = "";
+		for (final TypedField<CustomerEditor> field : fields) {
+			listOfFields += field.getName() + "\n";
+		}
+		return listOfFields;
+	}
+
+	/**
+	 * Colors the mandatory field if empty.
+	 *
+	 * @param screenControl The ScreenControl instance.
+	 * @param head The CustomerEditor instance.
+	 * @param isEmpty Whether or not the field is empty.
+	 * @param field The field.
+	 * @param fields The list to add the field to if it is empty.
+	 * @return The list of empty fields.
+	 */
+	private List<TypedField<CustomerEditor>>
+			markMandatoryField(ScreenControl screenControl, CustomerEditor head,
+					boolean isEmpty, TypedField<CustomerEditor> field,
+					List<TypedField<CustomerEditor>> fields) {
+		screenControl.setColor(head, field, Color.DEFAULT, Color.DEFAULT);
+		if (isEmpty) {
+			screenControl.setColor(head, field, Color.DEFAULT, Color.RED);
+			fields.add(field);
+		}
+		return fields;
+	}
+
+	/**
+	 * Checks whether to mark the mandatory fields.
+	 *
+	 * @param screenControl The ScreenControl instance.
+	 * @param head The CustomerEditor instance.
+	 * @param fields The empty list to story unfilled mandatory fields.
+	 * @return The list containing all unfilled mandatory fields.
+	 */
+	private List<TypedField<CustomerEditor>> markMandatoryFields(
+			ScreenControl screenControl, CustomerEditor head,
+			List<TypedField<CustomerEditor>> fields) {
+		fields =
+				markMandatoryField(screenControl, head, head.getDescrOperLang()
+						.isEmpty(), CustomerEditor.META.descrOperLang, fields);
+		fields =
+				markMandatoryField(screenControl, head, head.getAddr().isEmpty(),
+						CustomerEditor.META.addr, fields);
+		fields =
+				markMandatoryField(screenControl, head, head.getStreet().isEmpty(),
+						CustomerEditor.META.street, fields);
+		fields =
+				markMandatoryField(screenControl, head, head.getZipCode().isEmpty(),
+						CustomerEditor.META.zipCode, fields);
+		fields =
+				markMandatoryField(screenControl, head, head.getTown().isEmpty(),
+						CustomerEditor.META.town, fields);
+		fields =
+				markMandatoryField(screenControl, head,
+						head.getStateOfTaxOffice() == null,
+						CustomerEditor.META.stateOfTaxOffice, fields);
+		fields =
+				markMandatoryField(screenControl, head, head.getContactPerson()
+						.isEmpty(), CustomerEditor.META.contactPerson, fields);
+		fields =
+				markMandatoryField(screenControl, head,
+						head.getInhouseContact() == null,
+						CustomerEditor.META.inhouseContact, fields);
+		fields =
+				markMandatoryField(screenControl, head, head.getPayTerm() == null,
+						CustomerEditor.META.payTerm, fields);
+		return fields;
+	}
+
+	/**
+	 * Displays customer in View mode if cancel button is pressed.
+	 *
 	 * @param event The event that occurred.
 	 * @param screenControl The ScreenControl instance.
 	 * @param ctx The database context.
@@ -48,22 +125,14 @@ public class CustomerScreenEventHandler {
 	@ScreenEventHandler(type = ScreenEventType.CANCEL)
 	public void screenCancel(ScreenEvent event, ScreenControl screenControl,
 			DbContext ctx, CustomerEditor head) throws EventException {
-		EnumDialogBox box =
-				new TextBox(ctx, "Screen cancelled", "Do you want to reopen this customer in View mode?")
-						.setButtons(ButtonSet.YES_NO).show();
-		if (box.equals(EnumDialogBox.No)) {
-			throw new EventException("");
-		}
-		else {
-			FOe.command("-PARALLEL <(Customer)>" + head.getId().toString() + "<(View)>");
-			throw new EventException("");
-		}
+		FOe.command("-PARALLEL <(Customer)>" + head.getId().toString() + "<(View)>");
+		throw new EventException("");
 	}
 
 	/**
-	 * Checks whether outstanding items for current customer are greater than
-	 * the credit limit.
-	 * 
+	 * Checks whether outstanding items for current customer are greater than the
+	 * credit limit.
+	 *
 	 * @param event The event that occurred.
 	 * @param screenControl The ScreenControl instance.
 	 * @param ctx The database context.
@@ -73,12 +142,12 @@ public class CustomerScreenEventHandler {
 	@ScreenEventHandler(type = ScreenEventType.END)
 	public void screenEnd(ScreenEndEvent event, ScreenControl screenControl,
 			DbContext ctx, CustomerEditor head) throws EventException {
-		OutstandingItems outstandingItems =
+		final OutstandingItems outstandingItems =
 				ctx.openInfosystem(OutstandingItems.class);
 		outstandingItems.setBervon(head.getIdno());
 		outstandingItems.setBerbis(head.getIdno());
 		outstandingItems.invokeStart();
-		BigDecimal ofsoll = outstandingItems.getOfsoll();
+		final BigDecimal ofsoll = outstandingItems.getOfsoll();
 		if (ofsoll.compareTo(head.getCredLim()) == 1) {
 			new TextBox(ctx, "Credit limit reached",
 					"This customers credit limit is exeeded.").show();
@@ -86,15 +155,15 @@ public class CustomerScreenEventHandler {
 	}
 
 	/**
-	 * Checks whether current user is inhouse contact of the customer that is
-	 * going to be edited.
+	 * Checks whether current user is inhouse contact of the customer that is going
+	 * to be edited.
 	 *
 	 * @param event The event that occurred.
 	 * @param screenControl The ScreenControl instance.
 	 * @param ctx The database context.
 	 * @param head The CustomerEditor instance.
-	 * @throws EventException Throws EventException with error message, if
-	 * editing the customer is not permitted for the current user.
+	 * @throws EventException Throws EventException with error message, if editing
+	 * the customer is not permitted for the current user.
 	 */
 	@ScreenEventHandler(type = ScreenEventType.ENTER)
 	public void screenEnter(ScreenEvent event, ScreenControl screenControl,
@@ -102,19 +171,19 @@ public class CustomerScreenEventHandler {
 		// checks whether screen is in edit mode
 		if (event.getCommand() == EnumEditorAction.Edit) {
 			// gets the current user's operator code from V-13-00
-			BufferFactoryImpl bufferFactoryImpl = new BufferFactoryImpl(true);
-			GlobalTextBuffer globalTextBuffer =
+			final BufferFactoryImpl bufferFactoryImpl = new BufferFactoryImpl(true);
+			final GlobalTextBuffer globalTextBuffer =
 					bufferFactoryImpl.getGlobalTextBuffer();
-			String operatorCode =
+			final String operatorCode =
 					globalTextBuffer.getStringValue("operatorCode");
 			// selects the password configuration with this operator code
-			String criteria = "operID=" + operatorCode + ";@englvar=(Yes)";
-			Selection<Password> selection =
+			final String criteria = "operID=" + operatorCode + ";@englvar=(Yes)";
+			final Selection<Password> selection =
 					ExpertSelection.create(Password.class, criteria);
-			Password password = QueryUtil.getFirst(ctx, selection);
+			final Password password = QueryUtil.getFirst(ctx, selection);
 			if (password != null) {
 				// gets the employee referenced in the password configuration
-				Employee employee = password.getEmployeePwdRef();
+				final Employee employee = password.getEmployeePwdRef();
 				if (employee != null) {
 					// compares whether the inhouse contact equals this employee
 					if (head.getInhouseContact() != employee) {
@@ -133,109 +202,26 @@ public class CustomerScreenEventHandler {
 
 	/**
 	 * Checks whether all mandatory fields are filled.
-	 * 
+	 *
 	 * @param event The event that occurred.
 	 * @param screenControl The ScreenControl instance.
 	 * @param ctx The database context.
 	 * @param head The CustomerEditor instance.
-	 * @throws EventException The exception thrown if not all mandatory fields
-	 * are filled.
+	 * @throws EventException The exception thrown if not all mandatory fields are
+	 * filled.
 	 */
 	@ScreenEventHandler(type = ScreenEventType.VALIDATION)
-	public void screenValidation(ScreenEvent event,
-			ScreenControl screenControl, DbContext ctx, CustomerEditor head)
-			throws EventException {
+	public void screenValidation(ScreenEvent event, ScreenControl screenControl,
+			DbContext ctx, CustomerEditor head) throws EventException {
 		List<TypedField<CustomerEditor>> fields =
 				new ArrayList<TypedField<CustomerEditor>>();
 		fields = markMandatoryFields(screenControl, head, fields);
 		if (!fields.isEmpty()) {
 			screenControl.moveCursor(head, fields.get(0));
-			String listOfFields = getFieldNames(fields);
+			final String listOfFields = getFieldNames(fields);
 			throw new EventException(
-					"The following fields are empty but mandatory:\n"
-							+ listOfFields);
+					"The following fields are empty but mandatory:\n" + listOfFields);
 		}
-	}
-
-	/**
-	 * Stores the names of the fields stored in the List in a String separating
-	 * them with a line break.
-	 * 
-	 * @param fields The list of fields.
-	 * @return The string containing the names of the fields.
-	 */
-	private String getFieldNames(List<TypedField<CustomerEditor>> fields) {
-		String listOfFields = "";
-		for (TypedField<CustomerEditor> field : fields) {
-			listOfFields += field.getName() + "\n";
-		}
-		return listOfFields;
-	}
-
-	/**
-	 * Colors the mandatory field if empty.
-	 * 
-	 * @param screenControl The ScreenControl instance.
-	 * @param head The CustomerEditor instance.
-	 * @param isEmpty Whether or not the field is empty.
-	 * @param field The field.
-	 * @param fields The list to add the field to if it is empty.
-	 * @return The list of empty fields.
-	 */
-	private List<TypedField<CustomerEditor>> markMandatoryField(
-			ScreenControl screenControl, CustomerEditor head, boolean isEmpty,
-			TypedField<CustomerEditor> field,
-			List<TypedField<CustomerEditor>> fields) {
-		screenControl.setColor(head, field, Color.DEFAULT, Color.DEFAULT);
-		if (isEmpty) {
-			screenControl.setColor(head, field, Color.DEFAULT, Color.RED);
-			fields.add(field);
-		}
-		return fields;
-	}
-
-	/**
-	 * Checks whether to mark the mandatory fields.
-	 * 
-	 * @param screenControl The ScreenControl instance.
-	 * @param head The CustomerEditor instance.
-	 * @param fields The empty list to story unfilled mandatory fields.
-	 * @return The list containing all unfilled mandatory fields.
-	 */
-	private List<TypedField<CustomerEditor>> markMandatoryFields(
-			ScreenControl screenControl, CustomerEditor head,
-			List<TypedField<CustomerEditor>> fields) {
-		fields =
-				markMandatoryField(screenControl, head, head.getDescrOperLang()
-						.isEmpty(), CustomerEditor.META.descrOperLang, fields);
-		fields =
-				markMandatoryField(screenControl, head, head.getAddr()
-						.isEmpty(), CustomerEditor.META.addr, fields);
-		fields =
-				markMandatoryField(screenControl, head, head.getStreet()
-						.isEmpty(), CustomerEditor.META.street, fields);
-		fields =
-				markMandatoryField(screenControl, head, head.getZipCode()
-						.isEmpty(), CustomerEditor.META.zipCode, fields);
-		fields =
-				markMandatoryField(screenControl, head, head.getTown()
-						.isEmpty(), CustomerEditor.META.town, fields);
-		fields =
-				markMandatoryField(screenControl, head, head
-						.getStateOfTaxOffice() == null,
-						CustomerEditor.META.stateOfTaxOffice, fields);
-		fields =
-				markMandatoryField(screenControl, head, head.getContactPerson()
-						.isEmpty(), CustomerEditor.META.contactPerson, fields);
-		fields =
-				markMandatoryField(screenControl, head, head
-						.getInhouseContact() == null,
-						CustomerEditor.META.inhouseContact, fields);
-		fields =
-				markMandatoryField(screenControl, head,
-						head.getPayTerm() == null, CustomerEditor.META.payTerm,
-						fields);
-		return fields;
 	}
 
 }
