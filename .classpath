@@ -5,5 +5,6 @@
 	<classpathentry kind="src" path="/Client"/>
 	<classpathentry kind="lib" path="lib/ganymed-ssh2-build210.jar"/>
 	<classpathentry kind="lib" path="lib/jdom-2.0.5.jar"/>
+	<classpathentry kind="lib" path="lib/javax.mail.jar"/>
 	<classpathentry kind="output" path="classes"/>
 </classpath>

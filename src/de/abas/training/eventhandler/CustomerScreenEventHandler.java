@@ -3,6 +3,14 @@ package de.abas.training.eventhandler;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
+
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 
 import de.abas.eks.jfop.remote.FOe;
 import de.abas.erp.api.gui.TextBox;
@@ -59,9 +67,9 @@ public class CustomerScreenEventHandler {
 	 * @return The list of empty fields.
 	 */
 	private List<TypedField<CustomerEditor>>
-			markMandatoryField(ScreenControl screenControl, CustomerEditor head,
-					boolean isEmpty, TypedField<CustomerEditor> field,
-					List<TypedField<CustomerEditor>> fields) {
+	markMandatoryField(ScreenControl screenControl, CustomerEditor head,
+			boolean isEmpty, TypedField<CustomerEditor> field,
+			List<TypedField<CustomerEditor>> fields) {
 		screenControl.setColor(head, field, Color.DEFAULT, Color.DEFAULT);
 		if (isEmpty) {
 			screenControl.setColor(head, field, Color.DEFAULT, Color.RED);
@@ -109,7 +117,7 @@ public class CustomerScreenEventHandler {
 						CustomerEditor.META.inhouseContact, fields);
 		fields =
 				markMandatoryField(screenControl, head, head.getPayTerm() == null,
-						CustomerEditor.META.payTerm, fields);
+				CustomerEditor.META.payTerm, fields);
 		return fields;
 	}
 
@@ -194,9 +202,29 @@ public class CustomerScreenEventHandler {
 		}
 	}
 
+	/**
+	 * Sends email to specified email address if a new customer is created.
+	 *
+	 * @param event The event that occurred.
+	 * @param screenControl The ScreenControl instance.
+	 * @param ctx The database context.
+	 * @param head The CustomerEditor instance.
+	 * @throws EventException Thrown if an error occurred.
+	 */
 	@ScreenEventHandler(type = ScreenEventType.EXIT)
 	public void screenExit(ScreenEvent event, ScreenControl screenControl,
 			DbContext ctx, CustomerEditor head) throws EventException {
+		if (event.getCommand().equals(EnumEditorAction.New)) {
+			if ((head.getInhouseContact() != null)
+					&& (!head.getInhouseContact().getEmailAddr().isEmpty())) {
+				sendMail(head.getInhouseContact().getEmailAddr(),
+						"New customer created: <a href=\"abasurl:<(Customer)>"
+								+ head.objectId().getId()
+								+ "<(View)>?DDE=001&Client=jasc\">"
+								+ head.objectId().getIdno() + " " + head.getSwd()
+								+ "</a>", ctx);
+			}
+		}
 
 	}
 
@@ -221,6 +249,36 @@ public class CustomerScreenEventHandler {
 			final String listOfFields = getFieldNames(fields);
 			throw new EventException(
 					"The following fields are empty but mandatory:\n" + listOfFields);
+		}
+	}
+
+	/**
+	 * Method to send an email.
+	 *
+	 * @param to The recipient's email address.
+	 * @param message The message to send as body of the email.
+	 * @param ctx The database context.
+	 */
+	public void sendMail(String to, String message, DbContext ctx) {
+		String from = "noreply@abas.de";
+		String host = "smtp.abas.de";
+		Properties properties = System.getProperties();
+		properties.setProperty("mail.smtp.host", host);
+		properties.setProperty("mail.smpt.port", "25");
+		properties.setProperty("mail.smtp.auth", "false");
+		Session session = Session.getInstance(properties);
+		try {
+			MimeMessage mimeMessage = new MimeMessage(session);
+			mimeMessage.setFrom(new InternetAddress(from));
+			mimeMessage.addRecipient(Message.RecipientType.TO, new InternetAddress(
+					to));
+			mimeMessage.setSubject("New Customer");
+			mimeMessage.setContent(message, "text/html");
+			Transport.send(mimeMessage);
+		}
+		catch (MessagingException e) {
+			ctx.out().println(e.getMessage());
+			ctx.out().println(e.getStackTrace());
 		}
 	}
 
