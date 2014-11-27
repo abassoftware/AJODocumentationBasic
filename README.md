@@ -1,4 +1,4 @@
-AJO-Trainings
+AJO Documentation Basic
 =============
 
-Classes for AJO-Trainings
+Classes for AJO Documentation Basic
