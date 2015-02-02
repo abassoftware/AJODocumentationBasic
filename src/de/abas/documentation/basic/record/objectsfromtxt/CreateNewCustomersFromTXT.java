@@ -40,8 +40,7 @@ public class CreateNewCustomersFromTXT extends AbstractAjoAccess {
 
 		try {
 			// instantiates the BufferedReader and BufferedWriter
-			bufferedReader =
-					new BufferedReader(new FileReader(pathToImportFile));
+			bufferedReader = new BufferedReader(new FileReader(pathToImportFile));
 			bufferedWriter = new BufferedWriter(new FileWriter(pathToLogFile));
 			//
 			bufferedWriter.append("Starting import:\n");
@@ -80,29 +79,15 @@ public class CreateNewCustomersFromTXT extends AbstractAjoAccess {
 			bufferedReader.close();
 			bufferedWriter.close();
 		}
-		catch (FileNotFoundException message) {
-			// closes BufferedReader instance to release system resources
-			closeBufferedReader(bufferedReader);
-			try {
-				bufferedWriter.append("\nAn error occurred: " + message + "\n");
-			}
-			catch (IOException e) {
-				getDbContext().out().println(e.getMessage());
-			}
-			closeBufferedWriter(bufferedWriter);
+		catch (FileNotFoundException e) {
+			logException(bufferedWriter, e.getMessage());
 		}
-		catch (IOException message) {
-			// closes BufferedReader instance to release system resources
-			closeBufferedReader(bufferedReader);
-			try {
-				bufferedWriter.append("\nAn error occurred: " + message + "\n");
-			}
-			catch (IOException e) {
-				getDbContext().out().println(e.getMessage());
-			}
-			closeBufferedWriter(bufferedWriter);
+		catch (IOException e) {
+			logException(bufferedWriter, e.getMessage());
 		}
 		finally {
+			abortEditor(customerEditor);
+			abortEditor(customerContactEditor);
 			// closes BufferedReader instance to release system resources
 			closeBufferedReader(bufferedReader);
 			// closes BufferedWriter instance to release system resources
@@ -115,7 +100,7 @@ public class CreateNewCustomersFromTXT extends AbstractAjoAccess {
 	 *
 	 * @param editor The editor to abort.
 	 */
-	protected void abortEditor(EditorObject editor) {
+	private void abortEditor(EditorObject editor) {
 		if (editor != null) {
 			if (editor.active()) {
 				editor.abort();
@@ -128,7 +113,7 @@ public class CreateNewCustomersFromTXT extends AbstractAjoAccess {
 	 *
 	 * @param bufferedReader The BufferedReader to close.
 	 */
-	protected void closeBufferedReader(BufferedReader bufferedReader) {
+	private void closeBufferedReader(BufferedReader bufferedReader) {
 		if (bufferedReader != null) {
 			try {
 				bufferedReader.close();
@@ -144,7 +129,7 @@ public class CreateNewCustomersFromTXT extends AbstractAjoAccess {
 	 *
 	 * @param bufferedWriter The BufferedWriter to close.
 	 */
-	protected void closeBufferedWriter(BufferedWriter bufferedWriter) {
+	private void closeBufferedWriter(BufferedWriter bufferedWriter) {
 		if (bufferedWriter != null) {
 			try {
 				bufferedWriter.close();
@@ -161,7 +146,7 @@ public class CreateNewCustomersFromTXT extends AbstractAjoAccess {
 	 * @param line The current line of the TXT-file.
 	 * @return The customer contact fields as an array.
 	 */
-	protected String[] getCustomerContactFields(String line) {
+	private String[] getCustomerContactFields(String line) {
 		String[] customerContactFields;
 		customerContactFields = line.substring(1).split(";");
 		return customerContactFields;
@@ -178,7 +163,7 @@ public class CreateNewCustomersFromTXT extends AbstractAjoAccess {
 	 * @throws IOException Signals that an I/O exception of some sort has
 	 * occurred.
 	 */
-	protected void getCustomerContactValues(BufferedWriter bufferedWriter,
+	private void getCustomerContactValues(BufferedWriter bufferedWriter,
 			String[] customerContactFields, CustomerEditor customerEditor,
 			String line) throws IOException {
 		CustomerContactEditor customerContactEditor;
@@ -204,7 +189,7 @@ public class CreateNewCustomersFromTXT extends AbstractAjoAccess {
 	 * @param line The current line of the TXT-file.
 	 * @return The customer fields as an array.
 	 */
-	protected String[] getCustomerFields(String line) {
+	private String[] getCustomerFields(String line) {
 		String[] customerFields;
 		customerFields = line.split(";");
 		return customerFields;
@@ -219,7 +204,7 @@ public class CreateNewCustomersFromTXT extends AbstractAjoAccess {
 	 * @throws IOException Signals that an I/O exception of some sort has
 	 * occurred.
 	 */
-	protected CustomerEditor getCustomerValues(BufferedWriter bufferedWriter,
+	private CustomerEditor getCustomerValues(BufferedWriter bufferedWriter,
 			String[] customerFields, String line) throws IOException {
 		CustomerEditor customerEditor;
 		String[] customerValues;
@@ -231,8 +216,7 @@ public class CreateNewCustomersFromTXT extends AbstractAjoAccess {
 		setCustomerFields(customerFields, customerValues, customerEditor);
 		// stores the new customer
 		customerEditor.commit();
-		bufferedWriter.append("\nCustomer "
-				+ customerEditor.objectId().getIdno()
+		bufferedWriter.append("\nCustomer " + customerEditor.objectId().getIdno()
 				+ " successfully created.\n");
 		return customerEditor;
 	}
@@ -249,15 +233,14 @@ public class CreateNewCustomersFromTXT extends AbstractAjoAccess {
 	 * @throws IOException Signals that an I/O exception of some sort has
 	 * occurred.
 	 */
-	protected CustomerEditor getFieldValues(BufferedWriter bufferedWriter,
+	private CustomerEditor getFieldValues(BufferedWriter bufferedWriter,
 			String[] customerFields, String[] customerContactFields,
 			CustomerEditor customerEditor,
 			CustomerContactEditor customerContactEditor, String line)
-					throws IOException {
+			throws IOException {
 		// customer field values
 		if (!line.startsWith(";")) {
-			customerEditor =
-					getCustomerValues(bufferedWriter, customerFields, line);
+			customerEditor = getCustomerValues(bufferedWriter, customerFields, line);
 		}
 		// customer contact field values
 		else {
@@ -277,8 +260,8 @@ public class CreateNewCustomersFromTXT extends AbstractAjoAccess {
 	 * @throws IOException Signals that an I/O exception of some sort has
 	 * occurred.
 	 */
-	protected void log(String[] fields, BufferedWriter bufferedWriter,
-			String message) throws IOException {
+	private void log(String[] fields, BufferedWriter bufferedWriter, String message)
+			throws IOException {
 		bufferedWriter.append(message);
 		for (String field : fields) {
 			bufferedWriter.append(field + " ");
@@ -291,7 +274,7 @@ public class CreateNewCustomersFromTXT extends AbstractAjoAccess {
 	 * @param bufferedWriter The BufferedWriter instance.
 	 * @param message The exception message.
 	 */
-	protected void logException(BufferedWriter bufferedWriter, String message) {
+	private void logException(BufferedWriter bufferedWriter, String message) {
 		try {
 			bufferedWriter.append("\nAn error occurred: " + message + "\n");
 		}
@@ -310,7 +293,7 @@ public class CreateNewCustomersFromTXT extends AbstractAjoAccess {
 	 * @param customerContactEditor Instance of CustomerContactEditor to create
 	 * new customer contact.
 	 */
-	protected void setCustomerContactFields(String[] customerContactFields,
+	private void setCustomerContactFields(String[] customerContactFields,
 			String[] customerContactValues, CustomerEditor customerEditor,
 			CustomerContactEditor customerContactEditor) {
 		customerContactEditor.setCompanyARAP(customerEditor);
@@ -334,8 +317,8 @@ public class CreateNewCustomersFromTXT extends AbstractAjoAccess {
 	 * @param customerValues Values of the fields.
 	 * @param customerEditor Instance of CustomerEditor to create new customer.
 	 */
-	protected void setCustomerFields(String[] customerFields,
-			String[] customerValues, CustomerEditor customerEditor) {
+	private void setCustomerFields(String[] customerFields, String[] customerValues,
+			CustomerEditor customerEditor) {
 		for (int i = 0; i < customerFields.length; i++) {
 			if (customerFields[i].equals("stateOfTaxOffice")) {
 				setState(customerValues[i], customerEditor);
@@ -356,15 +339,15 @@ public class CreateNewCustomersFromTXT extends AbstractAjoAccess {
 	 * @param customerContactEditor Instance of CustomerContactEditor to create
 	 * new customer contact.
 	 */
-	protected void setSalutation(String salutation,
+	private void setSalutation(String salutation,
 			CustomerContactEditor customerContactEditor) {
 		if (salutation.equals("m")) {
-			customerContactEditor.setSalutation(getDbContext().load(
-					Summary.class, new IdImpl("(173,12,0)")));
+			customerContactEditor.setSalutation(getDbContext().load(Summary.class,
+					new IdImpl("(173,12,0)")));
 		}
 		else if (salutation.equals("f")) {
-			customerContactEditor.setSalutation(getDbContext().load(
-					Summary.class, new IdImpl("(174,12,0)")));
+			customerContactEditor.setSalutation(getDbContext().load(Summary.class,
+					new IdImpl("(174,12,0)")));
 		}
 	}
 
@@ -375,11 +358,10 @@ public class CreateNewCustomersFromTXT extends AbstractAjoAccess {
 	 * @param customerEditor Instance of the CustomerEditor to create new
 	 * customer.
 	 */
-	protected void setState(String stateISO, CustomerEditor customerEditor) {
+	private void setState(String stateISO, CustomerEditor customerEditor) {
 		String criteria = "ctryCode2Char=" + stateISO + ";@englvar=(Yes);";
 		Selection<RegionCountryEconomicArea> selection =
-				ExpertSelection.create(RegionCountryEconomicArea.class,
-						criteria);
+				ExpertSelection.create(RegionCountryEconomicArea.class, criteria);
 		RegionCountryEconomicArea regionCountryEconomicArea =
 				QueryUtil.getFirst(getDbContext(), selection);
 		customerEditor.setStateOfTaxOffice(regionCountryEconomicArea);
