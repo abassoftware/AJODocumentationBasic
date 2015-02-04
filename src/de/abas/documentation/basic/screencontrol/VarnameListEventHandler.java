@@ -8,13 +8,12 @@ import de.abas.erp.axi2.annotation.ScreenEventHandler;
 import de.abas.erp.axi2.event.ScreenEvent;
 import de.abas.erp.axi2.type.ScreenEventType;
 import de.abas.erp.db.DbContext;
-import de.abas.erp.db.infosystem.custom.ow1.InfosystemVARNAMELIST;
+import de.abas.erp.db.infosystem.custom.ow1.ControlVarnameList;
 import de.abas.erp.jfop.rt.api.annotation.RunFopWith;
 import de.abas.jfop.base.buffer.BufferFactory;
 import de.abas.jfop.base.buffer.GlobalTextBuffer;
 
-@EventHandler(head = InfosystemVARNAMELIST.class,
-		row = InfosystemVARNAMELIST.Row.class)
+@EventHandler(head = ControlVarnameList.class, row = ControlVarnameList.Row.class)
 @RunFopWith(EventHandlerRunner.class)
 public class VarnameListEventHandler {
 
@@ -30,7 +29,7 @@ public class VarnameListEventHandler {
 	 */
 	@ScreenEventHandler(type = ScreenEventType.ENTER)
 	public void screenEnter(ScreenEvent event, ScreenControl screenControl,
-			DbContext ctx, InfosystemVARNAMELIST head) throws EventException {
+			DbContext ctx, ControlVarnameList head) throws EventException {
 
 		// access to global variable table (V-13-00)
 		BufferFactory bufferFactory = BufferFactory.newInstance();
@@ -40,8 +39,7 @@ public class VarnameListEventHandler {
 		// protect start button if users do not have operator ID CK, CH, TK or ABAS
 		if (!(operatorID.equals("CK") || operatorID.equals("CH")
 				|| operatorID.equals("TK") || operatorID.equals("ABAS"))) {
-			screenControl
-					.setProtection(head, InfosystemVARNAMELIST.META.start, true);
+			screenControl.setProtection(head, ControlVarnameList.META.start, true);
 		}
 	}
 }
