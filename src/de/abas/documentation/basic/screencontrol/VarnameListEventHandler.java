@@ -18,6 +18,16 @@ import de.abas.jfop.base.buffer.GlobalTextBuffer;
 @RunFopWith(EventHandlerRunner.class)
 public class VarnameListEventHandler {
 
+	/**
+	 * Protects start button of infosystem for all users whose operator code does not
+	 * match CK, CH, TK or ABAS.
+	 *
+	 * @param event The event that occurred.
+	 * @param screenControl The ScreenControl instance.
+	 * @param ctx The database context.
+	 * @param head The InfosystemVARNAMELIST instance.
+	 * @throws EventException Thrown if an error occurred.
+	 */
 	@ScreenEventHandler(type = ScreenEventType.ENTER)
 	public void screenEnter(ScreenEvent event, ScreenControl screenControl,
 			DbContext ctx, InfosystemVARNAMELIST head) throws EventException {
@@ -28,11 +38,8 @@ public class VarnameListEventHandler {
 		String operatorID = globalTextBuffer.getStringValue("operatorCode");
 
 		// protect start button if users do not have operator ID CK, CH, TK or ABAS
-		if (operatorID.equals("CK") || operatorID.equals("CH")
-				|| operatorID.equals("TK") || operatorID.equals("ABAS")) {
-
-		}
-		else {
+		if (!(operatorID.equals("CK") || operatorID.equals("CH")
+				|| operatorID.equals("TK") || operatorID.equals("ABAS"))) {
 			screenControl
 					.setProtection(head, InfosystemVARNAMELIST.META.start, true);
 		}

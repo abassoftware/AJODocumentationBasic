@@ -19,10 +19,21 @@ import de.abas.jfop.base.Color;
 @RunFopWith(EventHandlerRunner.class)
 public class ColorSalesOrderEventHandler {
 
+	/**
+	 * The current table row is colored if the sales price of the chosen product is
+	 * 0.00 and the sales price field's font color is set to red.
+	 *
+	 * @param event The event that occurred.
+	 * @param screenControl The ScreenControl instance.
+	 * @param ctx The database context.
+	 * @param head The SalesOrderEditor instance.
+	 * @param currentRow The current table row's SalesOrderEditor.Row instance.
+	 * @throws EventException Thrown if an error occurred.
+	 */
 	@FieldEventHandler(field = "product", type = FieldEventType.EXIT, table = true)
 	public void rowProductExit(FieldEvent event, ScreenControl screenControl,
 			DbContext ctx, SalesOrderEditor head, SalesOrderEditor.Row currentRow)
-					throws EventException {
+			throws EventException {
 		if (currentRow.getPrice().compareTo(BigDecimal.ZERO) == 0) {
 			screenControl.setColor(currentRow, Color.YELLOW, Color.TEAL);
 			screenControl.setColor(currentRow, SalesOrder.Row.META.price, Color.RED,

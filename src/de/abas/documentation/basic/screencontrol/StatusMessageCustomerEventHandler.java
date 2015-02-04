@@ -17,6 +17,18 @@ import de.abas.jfop.base.Color;
 @RunFopWith(EventHandlerRunner.class)
 public class StatusMessageCustomerEventHandler {
 
+	/**
+	 * Hinders the user to leave the field telexAddr (email) if the entered email
+	 * address is not valid. If the validation process was successful, an appropriate
+	 * text is displayed in the status bar. The text is displayed in a green font
+	 * color.
+	 *
+	 * @param event The event that occurred.
+	 * @param screenControl The ScreenControl instance.
+	 * @param ctx The database context.
+	 * @param head The CustomerEditor instance.
+	 * @throws EventException Thrown if the email address is not valid.
+	 */
 	@FieldEventHandler(field = "telexAddr", type = FieldEventType.VALIDATION)
 	public void telexAddrValidation(FieldEvent event, ScreenControl screenControl,
 			DbContext ctx, CustomerEditor head) throws EventException {
