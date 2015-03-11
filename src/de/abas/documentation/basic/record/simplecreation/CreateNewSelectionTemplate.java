@@ -26,7 +26,7 @@ public class CreateNewSelectionTemplate extends AbstractAjoAccess {
 	}
 
 	@Override
-	public void run(String[] args) {
+	public int run(String[] args) {
 		EDPEditor edpEditor = null;
 		SelectionTemplateEditor selectionTemplateEditor = null;
 		try {
@@ -39,13 +39,12 @@ public class CreateNewSelectionTemplate extends AbstractAjoAccess {
 			// in this case an instance of SelectionTemplateEditor
 			edpEditor.beginEditNew("12", "(SelectionBar)");
 			selectionTemplateEditor =
-					LegacyUtil.wrap(getDbContext(),
-							SelectionTemplateEditor.class, edpEditor);
+					LegacyUtil.wrap(getDbContext(), SelectionTemplateEditor.class,
+							edpEditor);
 			// sets fields for new SelectionTemplate
 			selectionTemplateEditor.setSwd("MYTASKS");
 			selectionTemplateEditor.setDescr("My tasks");
-			selectionTemplateEditor
-			.setDatabase(EnumDatabaseDynamicE35.Transaction);
+			selectionTemplateEditor.setDatabase(EnumDatabaseDynamicE35.Transaction);
 			selectionTemplateEditor.setGrpList("86:2");
 			// sets row fields for new SelectionTemplate
 			// (this is necessary as rows are mandatory in SelectionTemplates)
@@ -100,6 +99,7 @@ public class CreateNewSelectionTemplate extends AbstractAjoAccess {
 				}
 			}
 		}
+		return 0;
 
 	}
 

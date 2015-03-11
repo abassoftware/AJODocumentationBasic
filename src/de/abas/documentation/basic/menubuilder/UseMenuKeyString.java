@@ -13,13 +13,15 @@ import de.abas.erp.db.DbContext;
 public class UseMenuKeyString extends AbstractAjoAccess {
 
 	@Override
-	public void run(String[] args) {
+	public int run(String[] args) {
 		DbContext ctx = getDbContext();
 
 		MenuBuilder<String> menuBuilder = new MenuBuilder<String>(ctx, "Selection");
 		createMenu(menuBuilder);
 		String select = menuBuilder.show();
 		ctx.out().println("selected: " + select);
+
+		return 0;
 	}
 
 	/**

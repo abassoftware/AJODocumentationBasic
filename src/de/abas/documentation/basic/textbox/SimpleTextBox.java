@@ -12,11 +12,12 @@ import de.abas.erp.api.gui.TextBox;
 public class SimpleTextBox extends AbstractAjoAccess {
 
 	@Override
-	public void run(String[] args) {
+	public int run(String[] args) {
 		TextBox textBox =
 				new TextBox(getDbContext(), "Title of the TextBox",
 						"Content of the TextBox");
 		textBox.show();
+		return 0;
 
 	}
 

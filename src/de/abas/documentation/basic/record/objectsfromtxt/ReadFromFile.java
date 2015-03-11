@@ -14,7 +14,7 @@ public class ReadFromFile extends AbstractAjoAccess {
 	}
 
 	@Override
-	public void run(String[] args) {
+	public int run(String[] args) {
 		// String in which to store content of file
 		String fileContent = "";
 		// Stores the current character as integer as it is returned by
@@ -66,6 +66,7 @@ public class ReadFromFile extends AbstractAjoAccess {
 			// system resources associated with it
 			closeFileReader(fileReader);
 		}
+		return 0;
 	}
 
 	/**

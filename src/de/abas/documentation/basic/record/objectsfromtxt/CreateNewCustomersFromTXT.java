@@ -21,7 +21,7 @@ import de.abas.erp.db.util.QueryUtil;
 public class CreateNewCustomersFromTXT extends AbstractAjoAccess {
 
 	@Override
-	public void run(String[] args) {
+	public int run(String[] args) {
 		// number of line of text file that is currently read
 		int lineNo = 0;
 		// arrays in which to store field names and values
@@ -93,6 +93,7 @@ public class CreateNewCustomersFromTXT extends AbstractAjoAccess {
 			// closes BufferedWriter instance to release system resources
 			closeBufferedWriter(bufferedWriter);
 		}
+		return 0;
 	}
 
 	/**

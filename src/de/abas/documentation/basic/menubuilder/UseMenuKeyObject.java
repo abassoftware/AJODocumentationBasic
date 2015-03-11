@@ -14,7 +14,7 @@ import de.abas.erp.db.DbContext;
 public class UseMenuKeyObject extends AbstractAjoAccess {
 
 	@Override
-	public void run(String[] args) {
+	public int run(String[] args) {
 		DbContext ctx = getDbContext();
 
 		MenuBuilder<MyMenuElement> menuBuilder =
@@ -23,12 +23,13 @@ public class UseMenuKeyObject extends AbstractAjoAccess {
 		MyMenuElement select = menuBuilder.show();
 		if (select == null) {
 			new TextBox(ctx, "Note", "Menu was cancelled").show();
-			return;
+			return 0;
 		}
 		ctx.out().println(
 				"selected: " + select.getDatabasNo() + ":" + select.getGroupNo()
-						+ " -> " + select.getDatabasName() + ":"
-						+ select.getGroupName());
+				+ " -> " + select.getDatabasName() + ":"
+				+ select.getGroupName());
+		return 0;
 	}
 
 	/**

@@ -18,7 +18,7 @@ public class CreateNewCustomer extends AbstractAjoAccess {
 	}
 
 	@Override
-	public void run(String[] args) {
+	public int run(String[] args) {
 		CustomerEditor newCustomer = null;
 		try {
 			// gets instance of CustomerEditor
@@ -53,6 +53,7 @@ public class CreateNewCustomer extends AbstractAjoAccess {
 				}
 			}
 		}
+		return 0;
 
 	}
 

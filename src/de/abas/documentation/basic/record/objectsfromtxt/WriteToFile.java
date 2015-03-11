@@ -13,7 +13,7 @@ public class WriteToFile extends AbstractAjoAccess {
 	}
 
 	@Override
-	public void run(String[] args) {
+	public int run(String[] args) {
 		FileWriter fileWriter = null;
 		try {
 			// the path of the file to write to
@@ -42,6 +42,7 @@ public class WriteToFile extends AbstractAjoAccess {
 			// system resources associated with it
 			closeFileWriter(fileWriter);
 		}
+		return 0;
 	}
 
 	/**

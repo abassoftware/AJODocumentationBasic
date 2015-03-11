@@ -17,16 +17,14 @@ public class ChangeExistingProduct extends AbstractAjoAccess {
 	 * @param args Method arguments
 	 */
 	public static void main(String[] args) {
-		ChangeExistingProduct changeExistingProduct =
-				new ChangeExistingProduct();
+		ChangeExistingProduct changeExistingProduct = new ChangeExistingProduct();
 		changeExistingProduct.runClientProgram(args);
 	}
 
 	@Override
-	public void run(String[] args) {
+	public int run(String[] args) {
 		// loads the product with the id (1,2,0)
-		Product product =
-				getDbContext().load(Product.class, new IdImpl("(1,2,0)"));
+		Product product = getDbContext().load(Product.class, new IdImpl("(1,2,0)"));
 		ProductEditor changeProduct = null;
 		try {
 			// initiates ProductEditor
@@ -45,8 +43,7 @@ public class ChangeExistingProduct extends AbstractAjoAccess {
 		}
 		catch (CommandException e) {
 			getDbContext().out().println(
-					"Error\nError in Editor command. "
-							+ "Something went wrong.");
+					"Error\nError in Editor command. " + "Something went wrong.");
 		}
 		finally {
 			// aborts the editor if it is active to prevent lock situations
@@ -56,5 +53,6 @@ public class ChangeExistingProduct extends AbstractAjoAccess {
 				}
 			}
 		}
+		return 0;
 	}
 }

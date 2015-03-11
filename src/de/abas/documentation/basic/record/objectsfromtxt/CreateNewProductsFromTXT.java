@@ -32,7 +32,7 @@ public class CreateNewProductsFromTXT extends AbstractAjoAccess {
 	private String SERVER_LOG_PATH = "owfiles/LOG.TXT";
 
 	@Override
-	public void run(String[] args) {
+	public int run(String[] args) {
 		// initializes BufferedReader and Buffered Writer
 		BufferedReader bufferedReader = null;
 		BufferedWriter bufferedWriter = null;
@@ -85,6 +85,7 @@ public class CreateNewProductsFromTXT extends AbstractAjoAccess {
 			closeBufferedReader(bufferedReader);
 			closeBufferedWriter(bufferedWriter);
 		}
+		return 0;
 	}
 
 	/**
@@ -145,7 +146,7 @@ public class CreateNewProductsFromTXT extends AbstractAjoAccess {
 	 */
 	protected void createProduct(ProductEditor productEditor,
 			BufferedWriter bufferedWriter, String[] fields, String[] values)
-			throws IOException {
+					throws IOException {
 		productEditor = context.newObject(ProductEditor.class);
 		for (int i = 0; i < values.length; i++) {
 			productEditor.setString(fields[i], values[i]);
@@ -189,12 +190,10 @@ public class CreateNewProductsFromTXT extends AbstractAjoAccess {
 			throws FileNotFoundException {
 		BufferedReader bufferedReader;
 		if (getMode().equals(ContextMode.CLIENT_MODE.toString())) {
-			bufferedReader =
-					new BufferedReader(new FileReader(CLIENT_TXT_PATH));
+			bufferedReader = new BufferedReader(new FileReader(CLIENT_TXT_PATH));
 		}
 		else {
-			bufferedReader =
-					new BufferedReader(new FileReader(SERVER_TXT_PATH));
+			bufferedReader = new BufferedReader(new FileReader(SERVER_TXT_PATH));
 		}
 		return bufferedReader;
 	}
@@ -211,12 +210,10 @@ public class CreateNewProductsFromTXT extends AbstractAjoAccess {
 	protected BufferedWriter instantiateBufferedWriter() throws IOException {
 		BufferedWriter bufferedWriter;
 		if (getMode().equals(ContextMode.CLIENT_MODE.toString())) {
-			bufferedWriter =
-					new BufferedWriter(new FileWriter(CLIENT_LOG_PATH));
+			bufferedWriter = new BufferedWriter(new FileWriter(CLIENT_LOG_PATH));
 		}
 		else {
-			bufferedWriter =
-					new BufferedWriter(new FileWriter(SERVER_LOG_PATH));
+			bufferedWriter = new BufferedWriter(new FileWriter(SERVER_LOG_PATH));
 		}
 		return bufferedWriter;
 	}
@@ -248,7 +245,7 @@ public class CreateNewProductsFromTXT extends AbstractAjoAccess {
 	protected void logNewProduct(BufferedWriter bufferedWriter,
 			ProductEditor productEditor) throws IOException {
 		Product product = productEditor.objectId();
-		bufferedWriter.write("Product " + product.getIdno() + "("
-				+ product.getSwd() + ") successfully created.\n");
+		bufferedWriter.write("Product " + product.getIdno() + "(" + product.getSwd()
+				+ ") successfully created.\n");
 	}
 }

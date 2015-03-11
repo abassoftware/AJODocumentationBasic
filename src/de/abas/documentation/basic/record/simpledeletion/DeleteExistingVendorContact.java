@@ -22,11 +22,10 @@ public class DeleteExistingVendorContact extends AbstractAjoAccess {
 	}
 
 	@Override
-	public void run(String[] args) {
+	public int run(String[] args) {
 		// loads VendorContact with the ID (261, 1, 0)
 		VendorContact vendorContact =
-				getDbContext().load(VendorContact.class,
-						new IdImpl("(261,1,0)"));
+				getDbContext().load(VendorContact.class, new IdImpl("(261,1,0)"));
 		String idno = vendorContact.getIdno();
 		String descr = vendorContact.getDescr();
 		VendorContactEditor vendorContactEditor = null;
@@ -40,7 +39,7 @@ public class DeleteExistingVendorContact extends AbstractAjoAccess {
 			// displays success message
 			getDbContext().out().println(
 					"Vendor contact " + idno + " " + descr
-							+ " was successfully deleted.");
+					+ " was successfully deleted.");
 		}
 		catch (CommandException e) {
 			getDbContext().out().println(
@@ -54,6 +53,7 @@ public class DeleteExistingVendorContact extends AbstractAjoAccess {
 				}
 			}
 		}
+		return 0;
 	}
 
 }
