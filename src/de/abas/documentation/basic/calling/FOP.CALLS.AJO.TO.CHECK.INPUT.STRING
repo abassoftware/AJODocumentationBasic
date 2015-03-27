@@ -1,0 +1,28 @@
+..!interpreter english translate noabbrev         
+..*****************************************************************************
+.. FOP-Name :		FOP.CALLS.AJO.TO.CHECK.INPUT.STRING
+.. Date : 			27.03.2015
+.. Author : 		abas Software AG
+.. Responsible : 	abas Software AG
+.. Supervisor : 		abas Software AG
+.. Copyright : (c)  2015
+.. Function : 
+..*****************************************************************************
+.. ow1/FOP.CALLS.AJO.TO.CHECK.INPUT.STRING
+..
+.type text xtinput    ? F|defined(U|xtinput) = G|false
+.type text xtmessage  ? F|defined(U|xtmessage) = G|false
+..
+!INPUT
+.formula U|xtmessage = "Ok"
+.read "Please enter alphabetical letter and numbers only:" U|xtinput
+..
+.input "de.abas.documentation.basic.calling.FopCallsAjoToCheckInputString.class"
+.continue END ? G|status = 0
+.box Bitte beachten 
+'U|xtmessage'
+..
+.continue INPUT
+..
+!END
+.end

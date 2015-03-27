@@ -1,0 +1,18 @@
+..!interpreter english translate noabbrev         
+..*****************************************************************************
+.. FOP-Name :		DEFINE.VARIABLE.USER.TEXT.BUFFER
+.. Date : 			27.03.2015
+.. Author : 		abas Software AG
+.. Responsible : 	abas Software AG
+.. Supervisor : 		abas Software AG
+.. Copyright : (c)  2015
+.. Function : 
+..*****************************************************************************
+.. ow1/DEFINE.VARIABLE.USER.TEXT.BUFFER
+..
+.type text xtsurName ? F|defined(U|xtsurName) = G|false
+.type text xtfirstName ? F|defined(U|xtfirstName) = G|false
+..
+.formula U|xtsurName = "XXX"
+.formula U|xtfirstName = "YYY"
+.continue
