@@ -31,18 +31,14 @@ public class CreateNewCustomersFromTXT extends AbstractAjoAccess {
 		CustomerEditor customerEditor = null;
 		CustomerContactEditor customerContactEditor = null;
 
-		// instance of the BufferedReader and BufferdReader
-		BufferedReader bufferedReader = null;
-		BufferedWriter bufferedWriter = null;
 		String line = "";
 		String pathToImportFile = "C:/Users/abas/Documents/customer.txt";
 		String pathToLogFile = "C:/Users/abas/Documents/log.txt";
 
-		try {
-			// instantiates the BufferedReader and BufferedWriter
-			bufferedReader = new BufferedReader(new FileReader(pathToImportFile));
-			bufferedWriter = new BufferedWriter(new FileWriter(pathToLogFile));
-			//
+		try (BufferedReader bufferedReader =
+				new BufferedReader(new FileReader(pathToImportFile));
+				BufferedWriter bufferedWriter =
+						new BufferedWriter(new FileWriter(pathToLogFile))) {
 			bufferedWriter.append("Starting import:\n");
 			// consecutively reads lines of text file until end of file reached
 			while ((line = bufferedReader.readLine()) != null) {
@@ -74,24 +70,16 @@ public class CreateNewCustomersFromTXT extends AbstractAjoAccess {
 				lineNo++;
 			}
 			bufferedWriter.append("Import successfully completed.\n");
-			// closes BufferedReader and BufferedWriter instances
-			// to release system resources
-			bufferedReader.close();
-			bufferedWriter.close();
 		}
 		catch (FileNotFoundException e) {
-			logException(bufferedWriter, e.getMessage());
+			logException(pathToLogFile, e.getMessage());
 		}
 		catch (IOException e) {
-			logException(bufferedWriter, e.getMessage());
+			logException(pathToLogFile, e.getMessage());
 		}
 		finally {
 			abortEditor(customerEditor);
 			abortEditor(customerContactEditor);
-			// closes BufferedReader instance to release system resources
-			closeBufferedReader(bufferedReader);
-			// closes BufferedWriter instance to release system resources
-			closeBufferedWriter(bufferedWriter);
 		}
 		return 0;
 	}
@@ -105,38 +93,6 @@ public class CreateNewCustomersFromTXT extends AbstractAjoAccess {
 		if (editor != null) {
 			if (editor.active()) {
 				editor.abort();
-			}
-		}
-	}
-
-	/**
-	 * Closes BufferedReader if it is not null and handles IOException.
-	 *
-	 * @param bufferedReader The BufferedReader to close.
-	 */
-	private void closeBufferedReader(BufferedReader bufferedReader) {
-		if (bufferedReader != null) {
-			try {
-				bufferedReader.close();
-			}
-			catch (IOException e) {
-				getDbContext().out().println(e.getMessage());
-			}
-		}
-	}
-
-	/**
-	 * Closes BufferedWriter if it is not null and handles IOException.
-	 *
-	 * @param bufferedWriter The BufferedWriter to close.
-	 */
-	private void closeBufferedWriter(BufferedWriter bufferedWriter) {
-		if (bufferedWriter != null) {
-			try {
-				bufferedWriter.close();
-			}
-			catch (IOException e) {
-				getDbContext().out().println(e.getMessage());
 			}
 		}
 	}
@@ -272,11 +228,12 @@ public class CreateNewCustomersFromTXT extends AbstractAjoAccess {
 	/**
 	 * Logs the exception message
 	 *
-	 * @param bufferedWriter The BufferedWriter instance.
+	 * @param pathToLogFile Path to and name of the log file.
 	 * @param message The exception message.
 	 */
-	private void logException(BufferedWriter bufferedWriter, String message) {
-		try {
+	private void logException(String pathToLogFile, String message) {
+		try (BufferedWriter bufferedWriter =
+				new BufferedWriter(new FileWriter(pathToLogFile))) {
 			bufferedWriter.append("\nAn error occurred: " + message + "\n");
 		}
 		catch (IOException e) {

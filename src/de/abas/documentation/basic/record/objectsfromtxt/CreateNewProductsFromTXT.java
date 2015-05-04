@@ -13,6 +13,13 @@ import de.abas.erp.db.EditorObject;
 import de.abas.erp.db.schema.part.Product;
 import de.abas.erp.db.schema.part.ProductEditor;
 
+/**
+ * Shows how to read product information from file, create the products accordingly
+ * and log the progress.
+ *
+ * @author abas Software AG
+ *
+ */
 public class CreateNewProductsFromTXT extends AbstractAjoAccess {
 
 	public static void main(String[] args) {
@@ -33,9 +40,6 @@ public class CreateNewProductsFromTXT extends AbstractAjoAccess {
 
 	@Override
 	public int run(String[] args) {
-		// initializes BufferedReader and Buffered Writer
-		BufferedReader bufferedReader = null;
-		BufferedWriter bufferedWriter = null;
 		// Instantiates ProductEditor
 		ProductEditor productEditor = null;
 		// Contents of current line of file
@@ -46,11 +50,8 @@ public class CreateNewProductsFromTXT extends AbstractAjoAccess {
 		String[] values;
 		// current line number in file
 		int lineNo = 0;
-		try {
-			// instantiates BufferedWriter and BufferedReader instances
-			// according to the current database context
-			bufferedReader = instantiateBufferedReader();
-			bufferedWriter = instantiateBufferedWriter();
+		try (BufferedReader bufferedReader = instantiateBufferedReader();
+				BufferedWriter bufferedWriter = instantiateBufferedWriter()) {
 			// logs start of import
 			bufferedWriter.append("Starting import:\n");
 			// consecutively reads lines of text file until end of file reached
@@ -68,22 +69,14 @@ public class CreateNewProductsFromTXT extends AbstractAjoAccess {
 				// increments line number
 				lineNo++;
 			}
-			// closes BufferedReader instance to release system resources
 			bufferedWriter.append("Import successfully completed.\n");
-			bufferedReader.close();
-			bufferedWriter.close();
 		}
 		catch (FileNotFoundException e) {
-			handleException(bufferedReader, bufferedWriter, productEditor, e,
+			handleException(productEditor, e,
 					"Could not retrieve file! For further information refer to log-file.");
 		}
 		catch (IOException e) {
-			handleException(bufferedReader, bufferedWriter, productEditor, e,
-					"An I/O error occurred!");
-		}
-		finally {
-			closeBufferedReader(bufferedReader);
-			closeBufferedWriter(bufferedWriter);
+			handleException(productEditor, e, "An I/O error occurred!");
 		}
 		return 0;
 	}
@@ -102,38 +95,6 @@ public class CreateNewProductsFromTXT extends AbstractAjoAccess {
 	}
 
 	/**
-	 * Closes BufferedReader if it is not null and handles IOException.
-	 *
-	 * @param bufferedReader The BufferedReader to close.
-	 */
-	protected void closeBufferedReader(BufferedReader bufferedReader) {
-		if (bufferedReader != null) {
-			try {
-				bufferedReader.close();
-			}
-			catch (IOException e) {
-				context.out().println(e.getMessage());
-			}
-		}
-	}
-
-	/**
-	 * Closes BufferedWriter if it is not null and handles IOException.
-	 *
-	 * @param bufferedWriter The BufferedWriter to close.
-	 */
-	protected void closeBufferedWriter(BufferedWriter bufferedWriter) {
-		if (bufferedWriter != null) {
-			try {
-				bufferedWriter.close();
-			}
-			catch (IOException e) {
-				context.out().println(e.getMessage());
-			}
-		}
-	}
-
-	/**
 	 * Creates the product according to the field values.
 	 *
 	 * @param productEditor The ProductEditor instance.
@@ -146,7 +107,7 @@ public class CreateNewProductsFromTXT extends AbstractAjoAccess {
 	 */
 	protected void createProduct(ProductEditor productEditor,
 			BufferedWriter bufferedWriter, String[] fields, String[] values)
-					throws IOException {
+			throws IOException {
 		productEditor = context.newObject(ProductEditor.class);
 		for (int i = 0; i < values.length; i++) {
 			productEditor.setString(fields[i], values[i]);
@@ -158,23 +119,16 @@ public class CreateNewProductsFromTXT extends AbstractAjoAccess {
 	/**
 	 * Handles the exceptions.
 	 *
-	 * @param bufferedReader The BufferedReader instance.
-	 * @param bufferedWriter The BufferedWriter instance.
 	 * @param productEditor The ProductEditor instance.
 	 * @param exception The exception which occurred.
 	 * @param message The message to display.
 	 */
-	protected void handleException(BufferedReader bufferedReader,
-			BufferedWriter bufferedWriter, ProductEditor productEditor,
-			Exception exception, String message) {
-		// closes BufferedReader instance to release system resources
-		closeBufferedReader(bufferedReader);
+	protected void handleException(ProductEditor productEditor, Exception exception,
+			String message) {
 		context.out().println(message);
-		logException(bufferedWriter, message + "\n" + exception.getMessage());
+		logException(message + "\n" + exception.getMessage());
 		// aborts the editors to prevent lock situations
 		abortEditor(productEditor);
-		// closes BufferedWriter instance to release system resources
-		closeBufferedWriter(bufferedWriter);
 	}
 
 	/**
@@ -221,11 +175,10 @@ public class CreateNewProductsFromTXT extends AbstractAjoAccess {
 	/**
 	 * Logs the exception message
 	 *
-	 * @param bufferedWriter The BufferedWriter instance.
 	 * @param message The exception message.
 	 */
-	protected void logException(BufferedWriter bufferedWriter, String message) {
-		try {
+	protected void logException(String message) {
+		try (BufferedWriter bufferedWriter = instantiateBufferedWriter()) {
 			bufferedWriter.append(message);
 		}
 		catch (IOException e) {
