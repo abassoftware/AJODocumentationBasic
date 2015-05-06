@@ -14,7 +14,7 @@ import de.abas.erp.db.selection.Selection;
  * @author abas Software AG
  *
  */
-public class ExpertSleectionProductRowCriteria extends AbstractAjoAccess {
+public class ExpertSelectionProductRowCriteria extends AbstractAjoAccess {
 
 	@Override
 	public int run(String[] args) {
